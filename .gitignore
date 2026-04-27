@@ -35,8 +35,10 @@ input/*.xls
 # Generated outputs and logs
 output/*.xlsx
 output/*.csv
+output/piezas_generadas/*
 output/generated_pieces/*
 output/logs/*
+!output/piezas_generadas/.gitkeep
 !output/generated_pieces/.gitkeep
 !output/logs/.gitkeep
 

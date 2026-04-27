@@ -7,6 +7,7 @@ paths:
   output_excel: output/piezas_normalizadas.xlsx
   output_csv: output/piezas_normalizadas.csv
   logs_dir: output/logs
+  generated_dir: output/piezas_generadas
 
 excel:
   sheet_name: 0
@@ -125,4 +126,17 @@ normalization:
     - incluido
     - lleva
     - usar
+
+generation:
+  kvs_root: C:\Users\roberto.ballestas\Desktop\grafic\KVS
+  output_format: png
+  preview:
+    px_per_cm: 8
+    max_width_px: 1800
+    max_height_px: 1800
+    background_fit: cover
+  text:
+    font_size_title_ratio: 0.045
+    font_size_body_ratio: 0.022
+    safe_margin_ratio: 0.055
 

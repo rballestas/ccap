@@ -38,12 +38,23 @@ class AppConfig:
         return self._resolve_env_path("CCAP_LOGS_DIR", self.raw["paths"]["logs_dir"])
 
     @property
+    def generated_dir(self) -> Path:
+        return self._resolve_env_path("CCAP_GENERATED_DIR", self.raw["paths"]["generated_dir"])
+
+    @property
     def excel(self) -> dict[str, Any]:
         return self.raw.get("excel", {})
 
     @property
     def normalization(self) -> dict[str, Any]:
         return self.raw.get("normalization", {})
+
+    @property
+    def generation(self) -> dict[str, Any]:
+        generation = dict(self.raw.get("generation", {}))
+        if os.getenv("CCAP_KVS_ROOT"):
+            generation["kvs_root"] = os.getenv("CCAP_KVS_ROOT")
+        return generation
 
     def _resolve_env_path(self, env_name: str, configured_path: str) -> Path:
         value = os.getenv(env_name, configured_path)
@@ -77,7 +88,7 @@ class ConfigLoader:
             if section not in raw:
                 raise ConfigError(f"Falta la seccion requerida en config.yaml: {section}")
 
-        expected_paths = ["input_excel", "output_excel", "output_csv", "logs_dir"]
+        expected_paths = ["input_excel", "output_excel", "output_csv", "logs_dir", "generated_dir"]
         missing_paths = [key for key in expected_paths if key not in raw["paths"]]
         if missing_paths:
             raise ConfigError(f"Faltan rutas en config.yaml: {', '.join(missing_paths)}")

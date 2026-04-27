@@ -223,3 +223,10 @@ La salida normalizada sera la entrada para etapas posteriores:
 - Se clasificaron los PDFs como referencias visuales objetivo de salida y la carpeta `KVS` como fuente base para armado futuro de piezas finales.
 - Se detecto que el Excel real contiene secciones `GRAFICAS CARRIER` y `GRAFICAS DE RETAIL`, encabezados repetidos y cambios de nombres como `MARGEN`, `EXCEDENTE`, `OBSERVACIONES` y `OBSERVACION`.
 - Se define que la Fase 1 debe normalizar ese Excel real preservando el canal por seccion antes de cualquier automatizacion grafica final.
+
+### 2026-04-27
+
+- Se habilita una Fase 2 experimental para generar previews comparativos desde la matriz normalizada y los JPG base de `KVS`.
+- Los previews no son artes finales ni reemplazan Illustrator/Photoshop; sirven para validar aproximacion visual contra los PDFs de ejemplo.
+- Se define seleccion automatica de KV horizontal o vertical segun proporcion de la pieza.
+- Se limita la resolucion de salida para evitar procesar archivos gigantes de impresion durante pruebas locales.

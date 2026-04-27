@@ -38,6 +38,24 @@ El proceso genera:
 - `output/piezas_normalizadas.csv`
 - `output/logs/normalizacion_YYYYMMDD_HHMMSS.log`
 
+## Generar previews experimentales
+
+Despues de normalizar la matriz, se pueden crear previews PNG usando los JPG base de `KVS`:
+
+```bash
+python src/generate_previews.py
+```
+
+Para probar pocas piezas:
+
+```bash
+python src/generate_previews.py --limit 3
+```
+
+Los previews se guardan en `output/piezas_generadas/`.
+
+Estos archivos son solo comparativos. No son artes finales ni reemplazan la salida desde Illustrator, Photoshop, HTML/CSS renderer o Adobe API.
+
 ## Importante
 
 Esta fase no genera piezas graficas finales. Solo limpia, estructura y valida la informacion para preparar una segunda fase de automatizacion grafica.
