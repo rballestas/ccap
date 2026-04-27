@@ -1,0 +1,18 @@
+﻿[
+  {
+    "id": 1,
+    "template_name": "banner_template.svg",
+    "titulo": "Ejemplo de Banner",
+    "descripcion": "Descripcion de ejemplo",
+    "imagen": "",
+    "formato_salida": "svg"
+  },
+  {
+    "id": 2,
+    "template_name": "social_post_template.html",
+    "titulo": "Post Social",
+    "texto": "Texto de ejemplo",
+    "color_fondo": "#FFFFFF",
+    "formato_salida": "html"
+  }
+]

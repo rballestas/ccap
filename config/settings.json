@@ -1,0 +1,28 @@
+﻿{
+  "paths": {
+    "input_dir": "data",
+    "output_dir": "output/generated_pieces",
+    "logs_dir": "output/logs",
+    "templates_dir": "templates",
+    "assets_dir": "assets"
+  },
+  "generation": {
+    "default_format": "svg",
+    "supported_input_formats": [".csv", ".xlsx", ".xls"],
+    "supported_output_formats": ["svg", "html", "png", "jpg", "jpeg"],
+    "default_canvas": {
+      "width": 1200,
+      "height": 628,
+      "background_color": "#FFFFFF"
+    }
+  },
+  "validation": {
+    "required_fields": ["id", "template_name"],
+    "asset_fields": ["logo", "imagen_principal", "fondo", "imagen"],
+    "output_format_field": "formato_salida"
+  },
+  "logging": {
+    "level": "INFO",
+    "file_prefix": "automation"
+  }
+}

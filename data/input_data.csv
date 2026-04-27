@@ -1,0 +1,3 @@
+﻿id,template_name,titulo,descripcion,texto,imagen,color_fondo,formato_salida,nombre_archivo
+1,banner_template.svg,Campaña Verano,Disfruta el sol,,,#F0F0F0,svg,banner_verano
+2,social_post_template.html,Promoción Especial,,Oferta limitada,,#FF5733,html,social_post_promocion

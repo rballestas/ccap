@@ -1,0 +1,18 @@
+﻿{
+  "banner_template.svg": {
+    "width": 1200,
+    "height": 628,
+    "default_output_format": "svg",
+    "required_fields": ["titulo", "descripcion"],
+    "placeholders": ["titulo", "descripcion", "imagen"],
+    "asset_fields": ["imagen"]
+  },
+  "social_post_template.html": {
+    "width": 1080,
+    "height": 1080,
+    "default_output_format": "html",
+    "required_fields": ["titulo", "texto", "color_fondo"],
+    "placeholders": ["titulo", "texto", "color_fondo"],
+    "asset_fields": []
+  }
+}
