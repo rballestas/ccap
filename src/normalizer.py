@@ -40,17 +40,24 @@ class MatrixNormalizer:
         report.header_row_index = int(header_index)
 
         headers = [self._cell_to_text(value) for value in cleaned.loc[header_index].tolist()]
+        current_section = self._cell_to_text(cleaned.loc[header_index].tolist()[1] if len(cleaned.loc[header_index].tolist()) > 1 else "")
         data = cleaned.loc[header_index + 1 :].copy()
         data.columns = self._dedupe_headers(headers)
         data = self._drop_empty_rows(data, report)
 
         canonical_map = self._build_canonical_map(data.columns)
         report.detected_columns = canonical_map.copy()
-        data = self._remove_repeated_headers(data, canonical_map, report)
 
         normalized_records = []
         for index, row in data.iterrows():
-            record = self._normalize_row(row, canonical_map, len(normalized_records) + 1)
+            repeated_header, section_label = self._is_repeated_header(row, canonical_map)
+            if repeated_header:
+                report.repeated_headers_removed += 1
+                if section_label:
+                    current_section = section_label
+                continue
+
+            record = self._normalize_row(row, canonical_map, len(normalized_records) + 1, current_section)
             if self._is_effectively_empty_record(record):
                 report.empty_rows_removed += 1
                 continue
@@ -94,32 +101,37 @@ class MatrixNormalizer:
         canonical_map: dict[str, str] = {}
         for column in columns:
             canonical = self._canonical_for_label(self._normalize_label(column))
+            if not canonical and self._looks_like_graphic_section(column):
+                canonical = "categoria_grafica"
             if canonical and canonical not in canonical_map:
                 canonical_map[canonical] = str(column)
         return canonical_map
 
-    def _remove_repeated_headers(
-        self,
-        data: pd.DataFrame,
-        canonical_map: dict[str, str],
-        report: NormalizationReport,
-    ) -> pd.DataFrame:
+    def _is_repeated_header(self, row: pd.Series, canonical_map: dict[str, str]) -> tuple[bool, str]:
         if not canonical_map:
-            return data
+            return False, ""
 
-        def is_repeated_header(row: pd.Series) -> bool:
-            matches = 0
-            for canonical, source_column in canonical_map.items():
-                value = self._normalize_label(row.get(source_column, ""))
-                if value and self._canonical_for_label(value) == canonical:
-                    matches += 1
-            return matches >= max(2, min(4, len(canonical_map)))
+        matches = 0
+        section_label = ""
+        for canonical, source_column in canonical_map.items():
+            raw_value = self._cell_to_text(row.get(source_column, ""))
+            value = self._normalize_label(raw_value)
+            detected = self._canonical_for_label(value)
+            if not detected and canonical == "categoria_grafica" and self._looks_like_graphic_section(raw_value):
+                detected = "categoria_grafica"
+                section_label = raw_value
+            if value and detected == canonical:
+                matches += 1
 
-        mask = data.apply(is_repeated_header, axis=1)
-        report.repeated_headers_removed += int(mask.sum())
-        return data.loc[~mask].copy().reset_index(drop=True)
+        return matches >= max(2, min(4, len(canonical_map))), section_label
 
-    def _normalize_row(self, row: pd.Series, canonical_map: dict[str, str], sequence: int) -> dict[str, Any]:
+    def _normalize_row(
+        self,
+        row: pd.Series,
+        canonical_map: dict[str, str],
+        sequence: int,
+        section_label: str,
+    ) -> dict[str, Any]:
         categoria = self._get_value(row, canonical_map, "categoria_grafica")
         medidas = self._get_value(row, canonical_map, "medidas")
         ancho, alto = self._parse_dimensions(medidas)
@@ -133,7 +145,7 @@ class MatrixNormalizer:
         return {
             "id_pieza": f"PZ-{sequence:04d}",
             "tipo_grafica": categoria,
-            "canal": self._infer_channel(categoria),
+            "canal": self._infer_channel(f"{section_label} {categoria}"),
             "tienda": self._get_value(row, canonical_map, "tienda"),
             "imagen_referencial": self._get_value(row, canonical_map, "imagen_referencial"),
             "medidas_original": medidas,
@@ -179,6 +191,10 @@ class MatrixNormalizer:
         if "retail" in normalized or "tienda" in normalized:
             return "retail"
         return "sin_clasificar"
+
+    def _looks_like_graphic_section(self, value: Any) -> bool:
+        normalized = self._normalize_label(value)
+        return "grafica" in normalized or "graficas" in normalized
 
     def _is_effectively_empty_record(self, record: dict[str, Any]) -> bool:
         business_values = [record.get("tipo_grafica"), record.get("tienda"), record.get("medidas_original"), record.get("observaciones")]

@@ -14,11 +14,21 @@ Esta guia describe la Fase 1 del proyecto: normalizacion de matrices Excel de pr
 python src/main.py
 ```
 
-## Usar un Excel especifico
+## Usar el Excel real de trabajo
 
 ```bash
-python src/main.py --input input/matriz_piezas.xlsx
+python src/main.py --input "C:\Users\roberto.ballestas\Desktop\grafic\INFORMACION GRAFICAS_GALAXY S26.xlsx"
 ```
+
+## Insumos reales detectados
+
+La carpeta `C:\Users\roberto.ballestas\Desktop\grafic` contiene:
+
+- PDFs: referencias visuales de las piezas finales esperadas.
+- `KVS`: paquetes base para armado futuro, con archivos `.ai`, fuentes y links JPG.
+- Excel: matriz de requerimientos usada como input principal de Fase 1.
+
+Los PDFs y KVS no se copian al repositorio porque son archivos pesados de produccion. Deben tratarse como insumos externos configurables.
 
 ## Salidas
 

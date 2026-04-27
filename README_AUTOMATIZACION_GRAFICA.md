@@ -216,3 +216,10 @@ La salida normalizada sera la entrada para etapas posteriores:
 - Se preparo el proyecto para control de versiones con Git.
 - Se definio una politica inicial de versionado: incluir codigo fuente, configuracion, documentacion, templates y datos de ejemplo; excluir logs, piezas generadas, caches y entornos locales.
 - Se agrego `.gitignore` para evitar subir artefactos de ejecucion y archivos temporales.
+
+### 2026-04-27
+
+- Se identifico la carpeta real de insumos `C:\Users\roberto.ballestas\Desktop\grafic` como fuente de trabajo externa.
+- Se clasificaron los PDFs como referencias visuales objetivo de salida y la carpeta `KVS` como fuente base para armado futuro de piezas finales.
+- Se detecto que el Excel real contiene secciones `GRAFICAS CARRIER` y `GRAFICAS DE RETAIL`, encabezados repetidos y cambios de nombres como `MARGEN`, `EXCEDENTE`, `OBSERVACIONES` y `OBSERVACION`.
+- Se define que la Fase 1 debe normalizar ese Excel real preservando el canal por seccion antes de cualquier automatizacion grafica final.
