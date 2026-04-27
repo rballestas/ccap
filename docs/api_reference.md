@@ -1,25 +1,29 @@
-﻿# Referencia de API
+﻿# Referencia de Modulos
 
-## `ConfigManager`
+## `src/config.py`
 
-Carga `config/settings.json` y `config/templates_config.json`, valida secciones minimas y expone rutas normalizadas del proyecto.
+Carga `config.yaml`, lee variables desde `.env` y expone rutas normalizadas.
 
-## `InputHandler`
+## `src/logger.py`
 
-Lee archivos CSV o Excel y devuelve una lista de registros normalizados.
+Configura logs de consola y archivo por ejecucion.
 
-## `Validator`
+## `src/reader.py`
 
-Valida dataset completo, campos obligatorios, templates, formatos de salida y existencia de assets.
+Lee matrices Excel con `pandas` y `openpyxl` en formato crudo para permitir deteccion flexible de encabezados.
 
-## `TemplateEngine`
+## `src/normalizer.py`
 
-Carga templates desde `templates/` y procesa placeholders con Jinja2.
+Normaliza columnas, omite filas vacias, omite encabezados repetidos, unifica campos equivalentes, extrae medidas y genera campos tecnicos.
 
-## `Generator`
+## `src/validators.py`
 
-Genera el payload final. En el MVP guarda SVG/HTML procesado y puede crear una previsualizacion raster basica para PNG/JPG.
+Genera resumen de validaciones: medidas faltantes, medidas invalidas, tienda faltante, observaciones criticas, troquelado y composicion especial.
 
-## `OutputManager`
+## `src/exporter.py`
 
-Crea carpetas por ejecucion, guarda piezas y escribe `manifest.json`.
+Exporta la matriz limpia a Excel y CSV.
+
+## `src/main.py`
+
+Orquesta la fase completa de normalizacion.

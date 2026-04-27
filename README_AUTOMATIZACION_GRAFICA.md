@@ -1,271 +1,215 @@
-﻿# Cheil Creative Automation Platform - Automatizacion de Produccion Grafica
+﻿# Cheil Creative Automation Platform - Normalizacion de Matrices de Produccion Grafica
 
 ## 1. Proposito del proyecto
 
-Cheil Creative Automation Platform busca industrializar la produccion de piezas graficas a partir de templates preparados por disenadores, datos estructurados y assets locales. El objetivo es reducir trabajo manual repetitivo, disminuir errores operativos y dejar una base tecnica mantenible que pueda crecer hacia integraciones con Adobe, almacenamiento cloud, bases de datos y una futura aplicacion web.
+Cheil Creative Automation Platform busca industrializar la produccion de piezas graficas para retail y carrier. La plataforma partira desde una matriz Excel operativa, limpiara y estructurara los requerimientos, validara riesgos de produccion y dejara datos tecnicos listos para una segunda fase de generacion grafica con Illustrator, Photoshop, HTML/CSS renderer o Adobe API.
 
-El primer MVP se enfoca en un flujo confiable y trazable:
+La primera fase no genera piezas graficas finales. Su objetivo es transformar un Excel irregular en una base confiable, normalizada y trazable.
 
-1. Leer un archivo de entrada CSV o Excel.
-2. Validar campos obligatorios por pieza.
-3. Validar existencia de templates y assets.
-4. Reemplazar placeholders en el template.
-5. Generar una salida organizada por ejecucion.
-6. Registrar logs, errores y resumen de procesamiento.
+## 2. Objetivo del MVP - Fase 1
 
-## 2. Flujo funcional esperado
+1. Leer el Excel original de requerimientos.
+2. Detectar y omitir filas vacias.
+3. Detectar encabezados repetidos o titulos intermedios.
+4. Normalizar nombres de columnas aunque vengan con pequenas variaciones.
+5. Unificar `MARGEN` y `EXCEDENTE` en `margen_excedente`.
+6. Unificar `OBSERVACION` y `OBSERVACIONES` en `observaciones`.
+7. Extraer `ancho_cm` y `alto_cm` desde el campo de medidas.
+8. Convertir medidas con coma decimal, por ejemplo `97,8x169 cms`.
+9. Crear campos tecnicos estandarizados.
+10. Exportar archivos limpios en Excel y CSV.
+11. Generar logs de validacion para riesgos de produccion.
+12. Dejar arquitectura preparada para conectar motores graficos en fases posteriores.
 
-1. El disenador crea un template base en la carpeta `templates/`.
-2. El equipo define campos dinamicos como `nombre_producto`, `precio`, `promocion`, `disclaimer`, `cta`, `logo`, `imagen_principal`, `fondo` y `formato_salida`.
-3. El usuario completa un archivo de entrada en `data/` con una fila por pieza.
-4. El sistema lee la informacion del archivo.
-5. El sistema valida que los campos obligatorios esten presentes.
-6. El sistema valida que existan los assets indicados.
-7. El sistema procesa el template con los datos de cada pieza.
-8. El sistema genera los archivos finales.
-9. El sistema exporta los resultados en una carpeta ordenada.
-10. El sistema registra logs de ejecucion, advertencias y errores.
+## 3. Columnas base esperadas del Excel
 
-## 3. Alcance del MVP
+El Excel original puede venir con nombres de columnas ligeramente distintos, secciones repetidas, titulos intermedios y filas vacias.
 
-### Incluido
+Columnas de negocio esperadas:
 
-- Lectura de archivos `.csv`, `.xlsx` y `.xls`.
-- Configuracion central en `config/settings.json`.
-- Configuracion de templates en `config/templates_config.json`.
-- Validacion previa de datos, templates y assets.
-- Procesamiento de templates con Jinja2.
-- Generacion inicial de salidas `.svg`, `.html` y raster basico con Pillow para `.png`/`.jpg`.
-- Carpeta de salida por ejecucion con timestamp.
-- Logs en archivo y consola.
-- Resumen final de piezas exitosas y fallidas.
-- Separacion entre entrada, configuracion, validacion, templates, generacion y salida.
+- `Categoria de grafica`
+- `Nombre de la tienda`
+- `Imagen referencial`
+- `Medidas horizontal x vertical`
+- `Con o sin logo Samsung`
+- `Otro logo`
+- `Logo Subtel`
+- `Legal`
+- `Margen o excedente`
+- `Observaciones`
 
-### No incluido todavia
+Variantes soportadas en el MVP:
 
-- Renderizado fiel de SVG/HTML a imagen final mediante motor dedicado.
-- Integracion directa con Illustrator, Photoshop o Adobe APIs.
+- `MARGEN`
+- `EXCEDENTE`
+- `OBSERVACION`
+- `OBSERVACIONES`
+- Variantes con tildes, mayusculas, minusculas, espacios dobles y signos simples.
+
+## 4. Campos tecnicos generados
+
+La salida normalizada debe contener:
+
+- `id_pieza`
+- `tipo_grafica`
+- `canal`
+- `tienda`
+- `imagen_referencial`
+- `medidas_original`
+- `ancho_cm`
+- `alto_cm`
+- `logo_samsung`
+- `otro_logo`
+- `logo_subtel_posicion`
+- `legal_posicion`
+- `margen_excedente`
+- `observaciones`
+- `requiere_troquelado`
+- `requiere_logo_samsung`
+- `requiere_otro_logo`
+- `requiere_logo_subtel`
+- `requiere_legal`
+- `requiere_composicion_especial`
+
+## 5. Validaciones del MVP
+
+El sistema debe registrar en logs y resumen de validaciones:
+
+- Medidas faltantes.
+- Medidas invalidas.
+- Tienda faltante.
+- Observaciones criticas.
+- Piezas con troquelado.
+- Piezas con composicion especial.
+- Encabezados repetidos omitidos.
+- Filas vacias omitidas.
+
+## 6. Estructura del proyecto
+
+```text
+creative_automation/
+|-- README_AUTOMATIZACION_GRAFICA.md
+|-- config.yaml
+|-- requirements.txt
+|-- .env.example
+|-- input/
+|   |-- matriz_piezas.xlsx
+|   `-- .gitkeep
+|-- output/
+|   |-- piezas_normalizadas.xlsx
+|   |-- piezas_normalizadas.csv
+|   `-- logs/
+|       `-- normalizacion_YYYYMMDD_HHMMSS.log
+|-- assets/
+|   |-- logos/
+|   |-- productos/
+|   |-- referencias/
+|   `-- fondos/
+|-- src/
+|   |-- main.py
+|   |-- config.py
+|   |-- reader.py
+|   |-- normalizer.py
+|   |-- validators.py
+|   |-- exporter.py
+|   `-- logger.py
+|-- tests/
+`-- docs/
+```
+
+## 7. Responsabilidades por modulo
+
+### `src/config.py`
+
+Carga configuracion desde `config.yaml` y permite sobreescribir rutas con variables de entorno.
+
+### `src/logger.py`
+
+Configura logging a consola y archivo por ejecucion.
+
+### `src/reader.py`
+
+Lee el Excel con `pandas` y `openpyxl`, sin asumir que el archivo viene perfectamente estructurado.
+
+### `src/normalizer.py`
+
+Normaliza columnas, elimina filas vacias, omite encabezados repetidos, unifica campos equivalentes y construye los campos tecnicos.
+
+### `src/validators.py`
+
+Evalua reglas de calidad de datos y riesgos productivos.
+
+### `src/exporter.py`
+
+Exporta la matriz normalizada a Excel y CSV.
+
+### `src/main.py`
+
+Orquesta la fase 1 completa: configuracion, lectura, normalizacion, validacion, exportacion y resumen.
+
+## 8. Configuracion
+
+El archivo `config.yaml` define rutas, columnas esperadas, sinonimos, reglas de deteccion y nombres de salida.
+
+No deben quedar rutas quemadas en el codigo. Las rutas pueden cambiarse desde `config.yaml` o variables de entorno documentadas en `.env.example`.
+
+## 9. Salidas esperadas
+
+La fase 1 genera:
+
+```text
+output/piezas_normalizadas.xlsx
+output/piezas_normalizadas.csv
+output/logs/normalizacion_YYYYMMDD_HHMMSS.log
+```
+
+## 10. Comandos de uso
+
+Instalar dependencias:
+
+```bash
+pip install -r requirements.txt
+```
+
+Ejecutar normalizacion:
+
+```bash
+python src/main.py
+```
+
+Usar un Excel especifico:
+
+```bash
+python src/main.py --input input/matriz_piezas.xlsx
+```
+
+Usar una configuracion especifica:
+
+```bash
+python src/main.py --config config.yaml
+```
+
+## 11. Preparacion para fases futuras
+
+La salida normalizada sera la entrada para etapas posteriores:
+
+- Mapeo contra templates graficos.
+- Validacion de assets locales o cloud.
+- Render HTML/CSS.
+- Automatizacion Illustrator o Photoshop.
+- Integracion Adobe API.
 - Azure Blob Storage.
 - SQL Server.
-- Interfaz web.
-- Colaboracion o edicion en tiempo real.
+- Aplicacion web para carga, revision y aprobacion.
 
-## 4. Principios tecnicos
-
-- Documentar antes de avanzar con implementacion.
-- Mantener modulos pequenos y con responsabilidades claras.
-- Evitar valores quemados: rutas, formatos, campos y patrones deben vivir en archivos de configuracion cuando corresponda.
-- Fallar temprano cuando falten datos criticos.
-- Continuar procesando piezas validas aunque una pieza falle.
-- Registrar trazabilidad suficiente para auditar una ejecucion.
-- Preparar interfaces simples para poder reemplazar generadores locales por integraciones futuras.
-
-## 5. Estructura propuesta del proyecto
-
-```text
-Cheil Creative Automation Platform/
-|-- README_AUTOMATIZACION_GRAFICA.md
-|-- requirements.txt
-|-- config/
-|   |-- settings.json
-|   `-- templates_config.json
-|-- data/
-|   |-- input_data.csv
-|   `-- sample_data.json
-|-- assets/
-|   |-- images/
-|   |-- fonts/
-|   `-- colors/
-|-- templates/
-|   |-- banner_template.svg
-|   `-- social_post_template.html
-|-- scripts/
-|   |-- main.py
-|   |-- config_manager.py
-|   |-- input_handler.py
-|   |-- validator.py
-|   |-- template_engine.py
-|   |-- generator.py
-|   `-- output_manager.py
-|-- output/
-|   |-- generated_pieces/
-|   `-- logs/
-|-- tests/
-|   |-- test_generator.py
-|   `-- test_validator.py
-`-- docs/
-    |-- user_guide.md
-    `-- api_reference.md
-```
-
-## 6. Responsabilidades por modulo
-
-### `scripts/main.py`
-
-Punto de entrada de la automatizacion. Orquesta configuracion, logging, carga de datos, validaciones, generacion y reporte final.
-
-### `scripts/config_manager.py`
-
-Carga y normaliza configuraciones desde archivos JSON. Centraliza rutas, formatos permitidos, campos obligatorios y parametros de ejecucion.
-
-### `scripts/input_handler.py`
-
-Lee archivos de entrada CSV o Excel y devuelve registros normalizados para el pipeline.
-
-### `scripts/validator.py`
-
-Valida estructura del input, campos obligatorios, existencia de templates, existencia de assets y consistencia basica de cada pieza antes de generar.
-
-### `scripts/template_engine.py`
-
-Carga templates desde `templates/` y reemplaza placeholders usando Jinja2.
-
-### `scripts/generator.py`
-
-Genera la pieza final segun el formato solicitado. En el MVP puede guardar contenido procesado como SVG/HTML o crear una imagen raster basica cuando se solicite PNG/JPG. La clase queda preparada para incorporar renderers especializados despues.
-
-### `scripts/output_manager.py`
-
-Crea carpetas ordenadas por ejecucion, construye nombres de archivo seguros y guarda piezas generadas.
-
-## 7. Configuracion
-
-### `config/settings.json`
-
-Define rutas, formatos soportados, formato por defecto, campos obligatorios globales, campos considerados assets y opciones de logging.
-
-Ejemplo conceptual:
-
-```json
-{
-  "paths": {
-    "input_dir": "data",
-    "output_dir": "output/generated_pieces",
-    "logs_dir": "output/logs",
-    "templates_dir": "templates",
-    "assets_dir": "assets"
-  },
-  "generation": {
-    "default_format": "svg",
-    "supported_output_formats": ["svg", "html", "png", "jpg", "jpeg"]
-  },
-  "validation": {
-    "required_fields": ["id", "template_name"],
-    "asset_fields": ["logo", "imagen_principal", "fondo", "imagen"]
-  }
-}
-```
-
-### `config/templates_config.json`
-
-Define reglas especificas por template: dimensiones, placeholders esperados, campos obligatorios y campos de assets.
-
-## 8. Formato de entrada
-
-El archivo de entrada debe tener una fila por pieza.
-
-Campos minimos:
-
-- `id`: identificador unico de la pieza.
-- `template_name`: nombre del archivo de template, por ejemplo `banner_template.svg`.
-
-Campos recomendados:
-
-- `nombre_producto`
-- `precio`
-- `promocion`
-- `disclaimer`
-- `cta`
-- `logo`
-- `imagen_principal`
-- `fondo`
-- `formato_salida`
-- `nombre_archivo`
-
-Tambien se soportan campos heredados del prototipo inicial, como `titulo`, `descripcion`, `imagen` y `color_fondo`.
-
-## 9. Reglas de validacion
-
-Antes de generar una pieza, el sistema debe validar:
-
-- El archivo de entrada existe.
-- El archivo de entrada tiene extension soportada.
-- Cada registro contiene los campos obligatorios globales.
-- El `template_name` existe en `templates/`.
-- Los placeholders obligatorios configurados para el template estan disponibles.
-- Los assets indicados existen en disco cuando el campo tiene valor.
-- El formato de salida solicitado esta soportado.
-- El identificador de pieza permite construir un nombre de archivo seguro.
-
-## 10. Logs y trazabilidad
-
-Cada ejecucion genera logs en `output/logs/automation_YYYYMMDD_HHMMSS.log`.
-
-Los logs deben registrar:
-
-- Inicio y fin de ejecucion.
-- Archivo de entrada utilizado.
-- Carpeta de salida creada.
-- Cantidad de registros leidos.
-- Piezas generadas correctamente.
-- Piezas fallidas y motivo del fallo.
-- Errores inesperados con stack trace cuando aplique.
-
-## 11. Estrategia de salida
-
-Cada ejecucion crea una carpeta unica dentro de `output/generated_pieces/` con formato `run_YYYYMMDD_HHMMSS`.
-
-Ejemplo:
-
-```text
-output/generated_pieces/run_20260427_093000/
-|-- 001_banner_verano.svg
-|-- 002_social_post_promocion.html
-`-- manifest.json
-```
-
-El archivo `manifest.json` resume resultados, rutas de salida, errores y fecha de ejecucion.
-
-## 12. Preparacion para crecimiento futuro
-
-La base debe permitir incorporar sin reescribir todo:
-
-- Renderers para Illustrator, Photoshop, HTML/CSS, SVG avanzado o Adobe API.
-- Conectores de almacenamiento como Azure Blob Storage.
-- Conectores de datos como SQL Server.
-- API backend para exponer la generacion como servicio.
-- Interfaz web para cargar datos, seleccionar templates y monitorear ejecuciones.
-- Sistema de colas para procesamiento masivo.
-- Validaciones por marca, cliente, campana o formato.
-
-## 13. Comandos de uso
-
-Validar sin generar:
-
-```bash
-python scripts/main.py --input data/input_data.csv --validate-only
-```
-
-Generar piezas:
-
-```bash
-python scripts/main.py --input data/input_data.csv
-```
-
-Indicar salida manual:
-
-```bash
-python scripts/main.py --input data/input_data.csv --output output/generated_pieces
-```
-
-## 14. Registro de cambios
+## 12. Registro de cambios
 
 ### 2026-04-27
 
-- Se corrigio la codificacion del documento maestro para evitar caracteres corruptos.
-- Se redefinio el README como documento rector del MVP.
-- Se establecieron reglas obligatorias de arquitectura, validacion, configuracion, logging y crecimiento futuro.
-- Se propuso una estructura modular alineada con una base profesional y escalable.
+- Se redefine el MVP como Fase 1 de normalizacion de matrices Excel de produccion grafica.
+- Se documentan columnas base, variantes esperadas, campos tecnicos de salida y validaciones requeridas.
+- Se establece nueva estructura modular en `src/` separando configuracion, lectura, normalizacion, validacion, exportacion y logging.
+- Se declara que esta fase no genera piezas graficas finales y queda preparada para integraciones futuras con Illustrator, Photoshop, HTML/CSS renderer o Adobe API.
 
 ### 2026-04-27
 

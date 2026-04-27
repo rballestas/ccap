@@ -26,7 +26,15 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Runtime input files
+input/*.xlsx
+input/*.xlsm
+input/*.xls
+!input/.gitkeep
+
 # Generated outputs and logs
+output/*.xlsx
+output/*.csv
 output/generated_pieces/*
 output/logs/*
 !output/generated_pieces/.gitkeep

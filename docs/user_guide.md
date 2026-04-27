@@ -1,36 +1,33 @@
 ﻿# Guia de Usuario
 
-Esta guia explica como usar el MVP de Cheil Creative Automation Platform.
+Esta guia describe la Fase 1 del proyecto: normalizacion de matrices Excel de produccion grafica.
 
-## Requisitos
+## Preparacion
 
-- Python 3.8 o superior.
-- Dependencias instaladas con `pip install -r requirements.txt`.
+1. Instala dependencias con `pip install -r requirements.txt`.
+2. Copia tu matriz original a `input/matriz_piezas.xlsx` o define otra ruta en `config.yaml`.
+3. Si necesitas rutas locales distintas, copia `.env.example` como `.env` y ajusta las variables.
 
-## Preparar una ejecucion
-
-1. Coloca los templates en `templates/`.
-2. Configura reglas de templates en `config/templates_config.json`.
-3. Coloca assets locales en `assets/`.
-4. Completa el archivo de entrada en `data/input_data.csv`.
-
-## Validar sin generar
+## Ejecutar normalizacion
 
 ```bash
-python scripts/main.py --input data/input_data.csv --validate-only
+python src/main.py
 ```
 
-## Generar piezas
+## Usar un Excel especifico
 
 ```bash
-python scripts/main.py --input data/input_data.csv
+python src/main.py --input input/matriz_piezas.xlsx
 ```
 
-## Revisar resultados
+## Salidas
 
-Cada ejecucion crea una carpeta en `output/generated_pieces/run_YYYYMMDD_HHMMSS/`.
+El proceso genera:
 
-Tambien se genera:
+- `output/piezas_normalizadas.xlsx`
+- `output/piezas_normalizadas.csv`
+- `output/logs/normalizacion_YYYYMMDD_HHMMSS.log`
 
-- Un log en `output/logs/`.
-- Un `manifest.json` dentro de la carpeta de salida.
+## Importante
+
+Esta fase no genera piezas graficas finales. Solo limpia, estructura y valida la informacion para preparar una segunda fase de automatizacion grafica.
